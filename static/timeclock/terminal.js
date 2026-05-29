@@ -2,7 +2,9 @@
 function updateClock() {
   const now = new Date();
   const el = document.getElementById('clock');
-  if (el) el.textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  // Fix: use page language so clock matches UI locale (24h PT vs 12h EN)
+  const locale = document.documentElement.lang || 'pt-BR';
+  if (el) el.textContent = now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 }
 setInterval(updateClock, 1000);
 updateClock();
@@ -48,6 +50,8 @@ function hideResult() {
 }
 
 function drawBox(detection, color) {
+  // Fix: guard against 0×0 canvas if loadedmetadata hasn't fired yet
+  if (!overlay.width || !overlay.height) return;
   const ctx = overlay.getContext('2d');
   ctx.clearRect(0, 0, overlay.width, overlay.height);
   if (!detection) return;
@@ -147,12 +151,16 @@ async function doPunch(overrideType) {
     setStatus(STRINGS.error, 'red');
   }
 
-  setBusy(false);
-  // After any result (success or failure), reset status after 4s
+  setBusy(false);  // re-enable immediately for error paths with no result card
+  // Fix: keep button disabled until result clears to prevent double-punch
+  if (resultCard && !resultCard.classList.contains('hidden')) {
+    registerBtn.disabled = true;
+  }
   setTimeout(() => {
     hideResult();
     drawBox(null, null);
     setStatus(STRINGS.ready);
+    setBusy(false);  // final unlock after result display window
   }, 4000);
 }
 

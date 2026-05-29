@@ -1,4 +1,5 @@
 import json
+import traceback
 from datetime import date, datetime, timedelta
 
 import numpy as np
@@ -38,15 +39,23 @@ def api_punch(request):
     descriptor = data.get('descriptor')
     override_type = data.get('override_type')
 
-    if not descriptor or len(descriptor) != 128:
-        return JsonResponse({'error': 'invalid_descriptor', 'detail': f'got {len(descriptor) if descriptor else 0} floats, expected 128'}, status=400)
+    # Fix: guard against non-list before calling len()
+    if not isinstance(descriptor, list) or len(descriptor) != 128:
+        return JsonResponse({'error': 'invalid_descriptor', 'detail': f'got {len(descriptor) if isinstance(descriptor, list) else type(descriptor).__name__}, expected list[128]'}, status=400)
+
+    # Fix: validate override_type against known choices before hitting the DB
+    if override_type is not None:
+        _valid = {k for k, _ in PunchRecord.PUNCH_TYPES}
+        if override_type not in _valid:
+            return JsonResponse({'error': 'invalid_punch_type', 'detail': f'must be one of {sorted(_valid)}'}, status=400)
 
     try:
         employee, confidence = _find_employee(descriptor)
     except Exception as e:
-        import traceback
         traceback.print_exc()
-        return JsonResponse({'error': 'find_employee_failed', 'detail': str(e)}, status=500)
+        # Fix: only expose detail in DEBUG to avoid leaking internals in production
+        detail = str(e) if settings.DEBUG else 'Internal error'
+        return JsonResponse({'error': 'find_employee_failed', 'detail': detail}, status=500)
 
     if employee is None:
         return JsonResponse({'error': 'face_not_recognized', 'confidence': confidence}, status=404)
