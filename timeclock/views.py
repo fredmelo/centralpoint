@@ -38,10 +38,15 @@ def api_punch(request):
     descriptor = data.get('descriptor')
     override_type = data.get('override_type')
 
-    if not descriptor or len(descriptor) != 512:
-        return JsonResponse({'error': 'invalid_descriptor'}, status=400)
+    if not descriptor or len(descriptor) != 128:
+        return JsonResponse({'error': 'invalid_descriptor', 'detail': f'got {len(descriptor) if descriptor else 0} floats, expected 128'}, status=400)
 
-    employee, confidence = _find_employee(descriptor)
+    try:
+        employee, confidence = _find_employee(descriptor)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': 'find_employee_failed', 'detail': str(e)}, status=500)
 
     if employee is None:
         return JsonResponse({'error': 'face_not_recognized', 'confidence': confidence}, status=404)
@@ -54,7 +59,7 @@ def api_punch(request):
     else:
         punch_type = next_expected_punch(employee, today)
         if punch_type is None:
-            return JsonResponse({'error': 'all_punches_done'}, status=409)
+            return JsonResponse({'error': 'all_punches_done', 'detail': 'Todas as batidas do dia já registradas.'}, status=409)
 
     punch = PunchRecord.objects.create(
         employee=employee,

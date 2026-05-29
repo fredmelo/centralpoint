@@ -28,74 +28,81 @@
   </div>
 </header>
 
-<main class="flex-1 flex flex-col items-center justify-center gap-6 p-6">
+<main class="flex-1 flex flex-col items-center justify-center gap-5 p-6">
 
   <!-- Camera area -->
   <div class="relative w-full max-w-lg">
     <video id="video" autoplay muted playsinline
       class="w-full rounded-2xl shadow-2xl border-2 border-gray-700"
-      style="max-height: 420px; object-fit: cover;"></video>
+      style="max-height: 400px; object-fit: cover;"></video>
     <canvas id="overlay" class="absolute inset-0 w-full h-full rounded-2xl" style="pointer-events:none;"></canvas>
 
-    <!-- Status overlay -->
+    <!-- Status badge -->
     <div id="status-badge"
-      class="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-sm font-semibold bg-gray-800/80 text-gray-300 backdrop-blur">
-      {% trans "Aguardando rosto..." %}
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-sm font-semibold bg-gray-800/80 text-gray-300 backdrop-blur whitespace-nowrap">
+      {% trans "Carregando..." %}
     </div>
   </div>
 
-  <!-- Result card -->
+  <!-- Result card (shown after punch) -->
   <div id="result-card" class="hidden w-full max-w-lg bg-gray-800 rounded-2xl p-6 text-center shadow-xl border border-gray-600">
-    <div id="result-photo" class="mb-3"></div>
-    <div id="result-name" class="text-2xl font-bold text-white mb-1"></div>
+    <div id="result-name"  class="text-2xl font-bold text-white mb-1"></div>
     <div id="result-punch" class="text-lg text-blue-400 font-semibold mb-1"></div>
-    <div id="result-time" class="text-3xl font-mono font-bold text-green-400"></div>
+    <div id="result-time"  class="text-3xl font-mono font-bold text-green-400"></div>
   </div>
 
-  <!-- Manual override buttons -->
-  <div class="w-full max-w-lg">
-    <p class="text-xs text-gray-500 text-center mb-2">{% trans "Reconhecimento falhou? Escolha manualmente:" %}</p>
-    <div class="grid grid-cols-2 gap-3">
-      <button onclick="manualPunch('clock_in')"
-        class="py-3 rounded-xl font-semibold text-sm bg-emerald-700 hover:bg-emerald-600 transition-colors">
+  <!-- Primary action -->
+  <button id="register-btn"
+    class="w-full max-w-lg py-5 rounded-2xl text-xl font-bold bg-blue-600 hover:bg-blue-500 active:scale-95 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+    {% trans "REGISTRAR PONTO" %}
+  </button>
+
+  <!-- Secondary: force a specific type -->
+  <details class="w-full max-w-lg">
+    <summary class="text-xs text-gray-500 cursor-pointer select-none text-center hover:text-gray-300">
+      {% trans "Escolher tipo manualmente" %}
+    </summary>
+    <div class="grid grid-cols-2 gap-2 mt-3">
+      <button onclick="triggerPunch('clock_in')"
+        class="py-2.5 rounded-xl text-sm font-semibold bg-emerald-700 hover:bg-emerald-600 transition-colors">
         {% trans "Entrada" %}
       </button>
-      <button onclick="manualPunch('lunch_start')"
-        class="py-3 rounded-xl font-semibold text-sm bg-amber-700 hover:bg-amber-600 transition-colors">
+      <button onclick="triggerPunch('lunch_start')"
+        class="py-2.5 rounded-xl text-sm font-semibold bg-amber-700 hover:bg-amber-600 transition-colors">
         {% trans "Início Almoço" %}
       </button>
-      <button onclick="manualPunch('lunch_end')"
-        class="py-3 rounded-xl font-semibold text-sm bg-teal-700 hover:bg-teal-600 transition-colors">
+      <button onclick="triggerPunch('lunch_end')"
+        class="py-2.5 rounded-xl text-sm font-semibold bg-teal-700 hover:bg-teal-600 transition-colors">
         {% trans "Fim Almoço" %}
       </button>
-      <button onclick="manualPunch('clock_out')"
-        class="py-3 rounded-xl font-semibold text-sm bg-rose-700 hover:bg-rose-600 transition-colors">
+      <button onclick="triggerPunch('clock_out')"
+        class="py-2.5 rounded-xl text-sm font-semibold bg-rose-700 hover:bg-rose-600 transition-colors">
         {% trans "Saída" %}
       </button>
     </div>
-  </div>
+  </details>
 
 </main>
 
-<!-- Audio feedback -->
-<audio id="beep-ok" src="{% url 'punch_terminal' %}?_=beep" preload="auto"></audio>
-
-<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-<script src="{% static 'timeclock/terminal.js' %}"></script>
+<!-- Variables must be declared BEFORE terminal.js -->
 <script>
-const LOCALE_DAYS = {{ LOCALE_DAYS|safe }};
+const LOCALE_DAYS   = {{ LOCALE_DAYS|safe }};
 const LOCALE_MONTHS = {{ LOCALE_MONTHS|safe }};
-const API_URL = "{% url 'api_punch' %}";
-const CSRF_TOKEN = "{{ csrf_token }}";
-// For production offline: copy models to static/face-api/models/ and change to "{% static 'face-api/models' %}"
-const FACE_MODEL_URL = "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights";
+const API_URL       = "{% url 'api_punch' %}";
+const CSRF_TOKEN    = "{{ csrf_token }}";
+const FACE_MODEL_URL = "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights";
 const STRINGS = {
-  waiting: "{% trans 'Aguardando rosto...' %}",
-  detecting: "{% trans 'Rosto detectado, identificando...' %}",
-  recognized: "{% trans 'Reconhecido!' %}",
+  loading:        "{% trans 'Carregando modelos...' %}",
+  ready:          "{% trans 'Pronto — pressione REGISTRAR' %}",
+  detecting:      "{% trans 'Identificando...' %}",
+  recognized:     "{% trans 'Reconhecido!' %}",
   not_recognized: "{% trans 'Não reconhecido. Tente novamente.' %}",
-  error: "{% trans 'Erro ao processar. Tente novamente.' %}",
+  no_face:        "{% trans 'Nenhum rosto detectado. Posicione-se na frente da câmera.' %}",
+  error:          "{% trans 'Erro ao processar. Tente novamente.' %}",
+  model_error:    "{% trans 'Erro ao carregar modelos.' %}",
 };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="{% static 'timeclock/terminal.js' %}"></script>
 </body>
 </html>

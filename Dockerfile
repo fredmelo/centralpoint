@@ -20,8 +20,10 @@ COPY --chown=appuser:appuser . .
 RUN mkdir -p /app/data static/face-api/models
 
 # Download face-api.js + model weights for offline use on the tablet
-RUN MODELS_BASE="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2" && \
-    curl -sL "$MODELS_BASE/dist/face-api.min.js" -o static/face-api/face-api.min.js && \
+# Library from npm, weights from GitHub (npm package does not include weights)
+RUN curl -sL "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js" \
+        -o static/face-api/face-api.min.js && \
+    WEIGHTS_BASE="https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights" && \
     for f in ssd_mobilenetv1_model-weights_manifest.json \
               ssd_mobilenetv1_model-shard1 \
               face_landmark_68_model-weights_manifest.json \
@@ -29,11 +31,11 @@ RUN MODELS_BASE="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2" && \
               face_recognition_model-weights_manifest.json \
               face_recognition_model-shard1 \
               face_recognition_model-shard2; do \
-        curl -sL "$MODELS_BASE/weights/$f" -o "static/face-api/models/$f"; \
+        curl -sL "$WEIGHTS_BASE/$f" -o "static/face-api/models/$f"; \
     done
 
 # Update templates to use local models in production
-RUN sed -i 's|https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights|/static/face-api/models|g' \
+RUN sed -i 's|https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights|/static/face-api/models|g' \
     templates/timeclock/punch_terminal.html \
     templates/timeclock/admin/employee_form.html
 

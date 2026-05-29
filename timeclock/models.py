@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class Employee(models.Model):
@@ -22,10 +23,10 @@ class Employee(models.Model):
 
 class PunchRecord(models.Model):
     PUNCH_TYPES = [
-        ('clock_in', 'Entrada'),
-        ('lunch_start', 'Início Almoço'),
-        ('lunch_end', 'Fim Almoço'),
-        ('clock_out', 'Saída'),
+        ('clock_in',     _('Entrada')),
+        ('lunch_start',  _('Início Almoço')),
+        ('lunch_end',    _('Fim Almoço')),
+        ('clock_out',    _('Saída')),
     ]
 
     employee = models.ForeignKey(Employee, on_delete=models.PROTECT, related_name='punches')

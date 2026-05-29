@@ -1,134 +1,345 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-#
+# Portuguese (Brazil) — default language, msgstrs empty (Django returns msgid as-is)
 msgid ""
 msgstr ""
 "Project-Id-Version: centralpoint\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-29 00:00+0000\n"
-"PO-Revision-Date: 2025-05-29 00:00+0000\n"
-"Last-Translator: \n"
-"Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid "Clock In"
-msgstr "Entrada"
+msgid "Controle de Ponto"
+msgstr ""
 
-msgid "Lunch Start"
-msgstr "Início Almoço"
+msgid "Carregando..."
+msgstr ""
 
-msgid "Lunch End"
-msgstr "Fim Almoço"
+msgid "Carregando modelos..."
+msgstr ""
 
-msgid "Clock Out"
-msgstr "Saída"
+msgid "Pronto — pressione REGISTRAR"
+msgstr ""
 
-msgid "Punch registered successfully."
-msgstr "Ponto registrado com sucesso."
+msgid "Identificando..."
+msgstr ""
 
-msgid "Employee not recognized."
-msgstr "Funcionário não reconhecido."
+msgid "Reconhecido!"
+msgstr ""
 
-msgid "All punches for today already registered."
-msgstr "Todas as batidas do dia já foram registradas."
+msgid "Não reconhecido. Tente novamente."
+msgstr ""
+
+msgid "Nenhum rosto detectado. Posicione-se na frente da câmera."
+msgstr ""
+
+msgid "Erro ao processar. Tente novamente."
+msgstr ""
+
+msgid "Erro ao carregar modelos."
+msgstr ""
+
+msgid "REGISTRAR PONTO"
+msgstr ""
+
+msgid "Escolher tipo manualmente"
+msgstr ""
+
+msgid "Entrada"
+msgstr ""
+
+msgid "Início Almoço"
+msgstr ""
+
+msgid "Fim Almoço"
+msgstr ""
+
+msgid "Saída"
+msgstr ""
+
+msgid "Painel de Administração"
+msgstr ""
 
 msgid "Dashboard"
-msgstr "Dashboard"
+msgstr ""
 
-msgid "Employees"
-msgstr "Funcionários"
+msgid "Funcionários"
+msgstr ""
 
-msgid "Punches"
-msgstr "Batidas"
+msgid "Batidas"
+msgstr ""
 
-msgid "Absences"
-msgstr "Abonos"
+msgid "Abonos"
+msgstr ""
 
-msgid "Balance"
-msgstr "Saldo de Horas"
+msgid "Saldo de Horas"
+msgstr ""
 
-msgid "Reports"
-msgstr "Relatórios"
+msgid "Relatórios"
+msgstr ""
 
-msgid "Logout"
-msgstr "Sair"
+msgid "Terminal de Ponto"
+msgstr ""
 
-msgid "Save"
-msgstr "Salvar"
+msgid "Sair"
+msgstr ""
 
-msgid "Cancel"
-msgstr "Cancelar"
+msgid "Funcionário"
+msgstr ""
 
-msgid "Edit"
-msgstr "Editar"
+msgid "Tipo"
+msgstr ""
 
-msgid "Delete"
-msgstr "Remover"
+msgid "Horário"
+msgstr ""
 
-msgid "Approve"
-msgstr "Aprovar"
+msgid "Confiança"
+msgstr ""
 
-msgid "Employee registered successfully."
-msgstr "Funcionário cadastrado com sucesso."
+msgid "Nenhuma batida hoje."
+msgstr ""
 
-msgid "Employee updated."
-msgstr "Funcionário atualizado."
+msgid "Últimas Batidas — Hoje"
+msgstr ""
 
-msgid "Employee deactivated."
-msgstr "Funcionário desativado."
+msgid "Presentes"
+msgstr ""
 
-msgid "Record updated."
-msgstr "Registro atualizado."
+msgid "Em Almoço"
+msgstr ""
 
-msgid "Punch registered manually."
-msgstr "Batida registrada manualmente."
+msgid "Saídas Hoje"
+msgstr ""
 
-msgid "Record removed."
-msgstr "Registro removido."
+msgid "Ausentes"
+msgstr ""
 
-msgid "Absence registered."
-msgstr "Abono registrado."
+msgid "Novo Funcionário"
+msgstr ""
 
-msgid "Absence approved."
-msgstr "Abono aprovado."
+msgid "funcionário(s)"
+msgstr ""
 
-msgid "Absence removed."
-msgstr "Abono removido."
+msgid "Foto"
+msgstr ""
 
-msgid "Invalid parameters."
-msgstr "Parâmetros inválidos."
+msgid "Horas/Dia"
+msgstr ""
 
-msgid "All employees"
-msgstr "Todos os funcionários"
+msgid "Status"
+msgstr ""
 
-msgid "Register"
-msgstr "Cadastrar"
+msgid "Rosto"
+msgstr ""
 
-msgid "Update"
-msgstr "Atualizar"
+msgid "Ativo"
+msgstr ""
 
-msgid "Report sent to %(email)s."
-msgstr "Relatório enviado para %(email)s."
+msgid "Inativo"
+msgstr ""
 
-msgid "Download PDF"
-msgstr "Baixar PDF"
+msgid "Cadastrado"
+msgstr ""
 
-msgid "Send by Email"
-msgstr "Enviar por Email"
+msgid "Sem rosto"
+msgstr ""
 
-msgid "Present"
-msgstr "Presentes"
+msgid "Editar"
+msgstr ""
 
-msgid "Absent"
-msgstr "Ausentes"
+msgid "Desativar"
+msgstr ""
 
-msgid "On Lunch"
-msgstr "Em Almoço"
+msgid "Nenhum funcionário cadastrado."
+msgstr ""
 
-msgid "Clocked Out"
-msgstr "Saídas"
+msgid "Cadastro de Reconhecimento Facial"
+msgstr ""
+
+msgid "Rosto já cadastrado. Capture novamente para atualizar."
+msgstr ""
+
+msgid "Capturar Rosto"
+msgstr ""
+
+msgid "Aguardando captura..."
+msgstr ""
+
+msgid "Cancelar"
+msgstr ""
+
+msgid "Confirmar Desativação"
+msgstr ""
+
+msgid "Registrar Manual"
+msgstr ""
+
+msgid "Todos"
+msgstr ""
+
+msgid "Data"
+msgstr ""
+
+msgid "Data/Hora"
+msgstr ""
+
+msgid "Origem"
+msgstr ""
+
+msgid "Nenhuma batida encontrada."
+msgstr ""
+
+msgid "Filtrar"
+msgstr ""
+
+msgid "Limpar"
+msgstr ""
+
+msgid "Auto"
+msgstr ""
+
+msgid "Manual"
+msgstr ""
+
+msgid "Editar Batida"
+msgstr ""
+
+msgid "Registrar Batida Manual"
+msgstr ""
+
+msgid "Salvar"
+msgstr ""
+
+msgid "Confirmar Remoção"
+msgstr ""
+
+msgid "Remover"
+msgstr ""
+
+msgid "registro(s)"
+msgstr ""
+
+msgid "Novo Abono"
+msgstr ""
+
+msgid "Horas"
+msgstr ""
+
+msgid "Motivo"
+msgstr ""
+
+msgid "Atestado"
+msgstr ""
+
+msgid "Aprovado"
+msgstr ""
+
+msgid "Pendente"
+msgstr ""
+
+msgid "Aprovar"
+msgstr ""
+
+msgid "Nenhum abono registrado."
+msgstr ""
+
+msgid "Registrar Abono"
+msgstr ""
+
+msgid "Confirmar Remoção do Abono"
+msgstr ""
+
+msgid "Selecione..."
+msgstr ""
+
+msgid "Ver Saldo"
+msgstr ""
+
+msgid "De"
+msgstr ""
+
+msgid "Até"
+msgstr ""
+
+msgid "Iníc. Almoço"
+msgstr ""
+
+msgid "Trabalhado"
+msgstr ""
+
+msgid "Esperado"
+msgstr ""
+
+msgid "Saldo"
+msgstr ""
+
+msgid "Nenhum dado no período."
+msgstr ""
+
+msgid "Total:"
+msgstr ""
+
+msgid "Selecione um funcionário para ver o saldo."
+msgstr ""
+
+msgid "Gerar Relatório"
+msgstr ""
+
+msgid "Todos os funcionários"
+msgstr ""
+
+msgid "Baixar PDF"
+msgstr ""
+
+msgid "Enviar por Email"
+msgstr ""
+
+msgid "Nenhum dado encontrado para o período selecionado."
+msgstr ""
+
+msgid "Entrar"
+msgstr ""
+
+msgid "Voltar ao Terminal"
+msgstr ""
+
+msgid "Usuário"
+msgstr ""
+
+msgid "Senha"
+msgstr ""
+
+msgid "Usuário ou senha incorretos."
+msgstr ""
+
+msgid "Funcionário cadastrado com sucesso."
+msgstr ""
+
+msgid "Funcionário atualizado."
+msgstr ""
+
+msgid "Funcionário desativado."
+msgstr ""
+
+msgid "Registro atualizado."
+msgstr ""
+
+msgid "Batida registrada manualmente."
+msgstr ""
+
+msgid "Registro removido."
+msgstr ""
+
+msgid "Abono registrado."
+msgstr ""
+
+msgid "Abono aprovado."
+msgstr ""
+
+msgid "Abono removido."
+msgstr ""
+
+msgid "Parâmetros inválidos."
+msgstr ""
+
+msgid "Relatório enviado para %(email)s."
+msgstr ""
