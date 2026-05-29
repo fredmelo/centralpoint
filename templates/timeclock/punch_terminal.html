@@ -1,0 +1,101 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centraltur Viagens — {% trans "Ponto" %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+<header class="px-6 py-4 flex items-center justify-between border-b border-gray-700">
+  <div class="flex items-center gap-3">
+    <span class="text-xl font-bold text-blue-400">Centraltur Viagens</span>
+    <span class="text-sm text-gray-400">— {% trans "Controle de Ponto" %}</span>
+  </div>
+  <div class="flex items-center gap-4">
+    <div id="clock" class="text-2xl font-mono font-bold text-blue-300"></div>
+    <form method="post" action="{% url 'set_language' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="/">
+      <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'pt-br' %}en{% else %}pt-br{% endif %}">
+      <button type="submit" class="text-xs font-semibold text-gray-400 hover:text-blue-400 border border-gray-600 rounded px-2 py-1">
+        {% if LANGUAGE_CODE == 'pt-br' %}EN{% else %}PT{% endif %}
+      </button>
+    </form>
+    <a href="{% url 'admin_dashboard' %}" class="text-xs text-gray-500 hover:text-blue-400">Admin</a>
+  </div>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center gap-6 p-6">
+
+  <!-- Camera area -->
+  <div class="relative w-full max-w-lg">
+    <video id="video" autoplay muted playsinline
+      class="w-full rounded-2xl shadow-2xl border-2 border-gray-700"
+      style="max-height: 420px; object-fit: cover;"></video>
+    <canvas id="overlay" class="absolute inset-0 w-full h-full rounded-2xl" style="pointer-events:none;"></canvas>
+
+    <!-- Status overlay -->
+    <div id="status-badge"
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-sm font-semibold bg-gray-800/80 text-gray-300 backdrop-blur">
+      {% trans "Aguardando rosto..." %}
+    </div>
+  </div>
+
+  <!-- Result card -->
+  <div id="result-card" class="hidden w-full max-w-lg bg-gray-800 rounded-2xl p-6 text-center shadow-xl border border-gray-600">
+    <div id="result-photo" class="mb-3"></div>
+    <div id="result-name" class="text-2xl font-bold text-white mb-1"></div>
+    <div id="result-punch" class="text-lg text-blue-400 font-semibold mb-1"></div>
+    <div id="result-time" class="text-3xl font-mono font-bold text-green-400"></div>
+  </div>
+
+  <!-- Manual override buttons -->
+  <div class="w-full max-w-lg">
+    <p class="text-xs text-gray-500 text-center mb-2">{% trans "Reconhecimento falhou? Escolha manualmente:" %}</p>
+    <div class="grid grid-cols-2 gap-3">
+      <button onclick="manualPunch('clock_in')"
+        class="py-3 rounded-xl font-semibold text-sm bg-emerald-700 hover:bg-emerald-600 transition-colors">
+        {% trans "Entrada" %}
+      </button>
+      <button onclick="manualPunch('lunch_start')"
+        class="py-3 rounded-xl font-semibold text-sm bg-amber-700 hover:bg-amber-600 transition-colors">
+        {% trans "Início Almoço" %}
+      </button>
+      <button onclick="manualPunch('lunch_end')"
+        class="py-3 rounded-xl font-semibold text-sm bg-teal-700 hover:bg-teal-600 transition-colors">
+        {% trans "Fim Almoço" %}
+      </button>
+      <button onclick="manualPunch('clock_out')"
+        class="py-3 rounded-xl font-semibold text-sm bg-rose-700 hover:bg-rose-600 transition-colors">
+        {% trans "Saída" %}
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Audio feedback -->
+<audio id="beep-ok" src="{% url 'punch_terminal' %}?_=beep" preload="auto"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="{% static 'timeclock/terminal.js' %}"></script>
+<script>
+const LOCALE_DAYS = {{ LOCALE_DAYS|safe }};
+const LOCALE_MONTHS = {{ LOCALE_MONTHS|safe }};
+const API_URL = "{% url 'api_punch' %}";
+const CSRF_TOKEN = "{{ csrf_token }}";
+// For production offline: copy models to static/face-api/models/ and change to "{% static 'face-api/models' %}"
+const FACE_MODEL_URL = "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights";
+const STRINGS = {
+  waiting: "{% trans 'Aguardando rosto...' %}",
+  detecting: "{% trans 'Rosto detectado, identificando...' %}",
+  recognized: "{% trans 'Reconhecido!' %}",
+  not_recognized: "{% trans 'Não reconhecido. Tente novamente.' %}",
+  error: "{% trans 'Erro ao processar. Tente novamente.' %}",
+};
+</script>
+</body>
+</html>

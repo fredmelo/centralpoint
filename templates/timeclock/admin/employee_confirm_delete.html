@@ -1,0 +1,23 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Confirmar Desativação" %}{% endblock %}
+
+{% block content %}
+<div class="max-w-md bg-white rounded-xl shadow p-6">
+  <p class="text-gray-700 mb-6">
+    {% blocktrans with name=employee.name %}
+    Deseja desativar o funcionário <strong>{{ name }}</strong>? Ele não poderá mais bater ponto.
+    {% endblocktrans %}
+  </p>
+  <form method="post" class="flex gap-3">
+    {% csrf_token %}
+    <button type="submit" class="px-5 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">
+      {% trans "Desativar" %}
+    </button>
+    <a href="{% url 'employee_list' %}" class="px-5 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200">
+      {% trans "Cancelar" %}
+    </a>
+  </form>
+</div>
+{% endblock %}

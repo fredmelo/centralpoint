@@ -1,0 +1,65 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Dashboard" %}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-3xl font-bold text-emerald-600">{{ present_count }}</div>
+    <div class="text-sm text-gray-500 mt-1">{% trans "Presentes" %}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-3xl font-bold text-amber-500">{{ on_lunch_count }}</div>
+    <div class="text-sm text-gray-500 mt-1">{% trans "Em Almoço" %}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-3xl font-bold text-blue-500">{{ clocked_out_count }}</div>
+    <div class="text-sm text-gray-500 mt-1">{% trans "Saídas Hoje" %}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-3xl font-bold text-red-500">{{ absent_count }}</div>
+    <div class="text-sm text-gray-500 mt-1">{% trans "Ausentes" %}</div>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl shadow">
+  <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+    <h2 class="font-semibold text-gray-700">{% trans "Últimas Batidas — Hoje" %} ({{ today|date:"d/m/Y" }})</h2>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+        <tr>
+          <th class="px-4 py-3 text-left">{% trans "Funcionário" %}</th>
+          <th class="px-4 py-3 text-left">{% trans "Tipo" %}</th>
+          <th class="px-4 py-3 text-left">{% trans "Horário" %}</th>
+          <th class="px-4 py-3 text-left">{% trans "Confiança" %}</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        {% for punch in recent_punches %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-3 font-medium text-gray-800">{{ punch.employee.name }}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+              {% if punch.punch_type == 'clock_in' %}bg-emerald-100 text-emerald-700
+              {% elif punch.punch_type == 'clock_out' %}bg-rose-100 text-rose-700
+              {% elif punch.punch_type == 'lunch_start' %}bg-amber-100 text-amber-700
+              {% else %}bg-teal-100 text-teal-700{% endif %}">
+              {{ punch.get_punch_type_display }}
+            </span>
+          </td>
+          <td class="px-4 py-3 font-mono">{{ punch.punched_at|time:"H:i" }}</td>
+          <td class="px-4 py-3 text-gray-500">
+            {% if punch.face_confidence %}{{ punch.face_confidence|floatformat:2 }}{% else %}—{% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="px-4 py-8 text-center text-gray-400">{% trans "Nenhuma batida hoje." %}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Batidas de Ponto" %}{% endblock %}
+
+{% block content %}
+<div class="flex items-end gap-3 mb-4 flex-wrap">
+  <form method="get" class="flex items-end gap-3 flex-wrap">
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">{% trans "Funcionário" %}</label>
+      <select name="employee" class="form-input w-48">
+        <option value="">{% trans "Todos" %}</option>
+        {% for emp in employees %}
+        <option value="{{ emp.pk }}" {% if selected_employee == emp.pk|stringformat:"s" %}selected{% endif %}>{{ emp.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">{% trans "Data" %}</label>
+      <input type="date" name="date" value="{{ selected_date }}" class="form-input">
+    </div>
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">{% trans "Filtrar" %}</button>
+    <a href="{% url 'punch_list' %}" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm rounded-lg hover:bg-gray-200">{% trans "Limpar" %}</a>
+  </form>
+  <a href="{% url 'punch_create' %}" class="ml-auto px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700">
+    + {% trans "Registrar Manual" %}
+  </a>
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+      <tr>
+        <th class="px-4 py-3 text-left">{% trans "Funcionário" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Tipo" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Data/Hora" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Origem" %}</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for punch in punches %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 font-medium text-gray-800">{{ punch.employee.name }}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-semibold
+            {% if punch.punch_type == 'clock_in' %}bg-emerald-100 text-emerald-700
+            {% elif punch.punch_type == 'clock_out' %}bg-rose-100 text-rose-700
+            {% elif punch.punch_type == 'lunch_start' %}bg-amber-100 text-amber-700
+            {% else %}bg-teal-100 text-teal-700{% endif %}">
+            {{ punch.get_punch_type_display }}
+          </span>
+        </td>
+        <td class="px-4 py-3 font-mono">{{ punch.punched_at|date:"d/m/Y H:i" }}</td>
+        <td class="px-4 py-3">
+          {% if punch.is_manual %}
+          <span class="text-orange-500 text-xs font-semibold">✏ {% trans "Manual" %}</span>
+          {% else %}
+          <span class="text-gray-400 text-xs">{% trans "Auto" %}</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex gap-3">
+            <a href="{% url 'punch_edit' punch.pk %}" class="text-blue-600 hover:underline text-xs">{% trans "Editar" %}</a>
+            <a href="{% url 'punch_delete' punch.pk %}" class="text-red-500 hover:underline text-xs">{% trans "Remover" %}</a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">{% trans "Nenhuma batida encontrada." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

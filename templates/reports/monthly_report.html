@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 11px; color: #1f2937; margin: 2cm; }
+    h1 { font-size: 18px; color: #1d4ed8; margin-bottom: 4px; }
+    .subtitle { font-size: 11px; color: #6b7280; margin-bottom: 24px; }
+    .employee-block { margin-bottom: 28px; page-break-inside: avoid; }
+    .employee-name { font-size: 14px; font-weight: bold; color: #111827; border-bottom: 2px solid #1d4ed8; padding-bottom: 4px; margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    th { background: #f3f4f6; text-align: left; padding: 5px 8px; font-size: 9px; text-transform: uppercase; color: #6b7280; }
+    td { padding: 5px 8px; border-bottom: 1px solid #f3f4f6; }
+    tfoot td { font-weight: bold; background: #f9fafb; border-top: 2px solid #e5e7eb; }
+    .pos { color: #059669; }
+    .neg { color: #dc2626; }
+    .footer { margin-top: 32px; font-size: 9px; color: #9ca3af; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>{{ company_name }}</h1>
+  <p class="subtitle">
+    Relatório de Ponto — {{ start_date|date:"d/m/Y" }} até {{ end_date|date:"d/m/Y" }}
+  </p>
+
+  {% for bd in report_data %}
+  <div class="employee-block">
+    <div class="employee-name">{{ bd.employee.name }} — {{ bd.employee.email }}</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Entrada</th>
+          <th>Iníc. Almoço</th>
+          <th>Fim Almoço</th>
+          <th>Saída</th>
+          <th>Trabalhado</th>
+          <th>Esperado</th>
+          <th>Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in bd.rows %}
+        <tr>
+          <td>{{ row.date|date:"d/m/Y" }}</td>
+          <td>{% if row.clock_in %}{{ row.clock_in.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+          <td>{% if row.lunch_start %}{{ row.lunch_start.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+          <td>{% if row.lunch_end %}{{ row.lunch_end.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+          <td>{% if row.clock_out %}{{ row.clock_out.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+          <td>{{ row.worked_fmt }}</td>
+          <td>{{ row.expected_fmt|default:"—" }}</td>
+          <td class="{% if row.balance and row.balance.total_seconds >= 0 %}pos{% elif row.balance %}neg{% endif %}">
+            {{ row.balance_fmt }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5" style="text-align:right">Total:</td>
+          <td>{{ bd.total_worked_fmt }}</td>
+          <td></td>
+          <td class="{% if bd.total_balance.total_seconds >= 0 %}pos{% else %}neg{% endif %}">{{ bd.total_balance_fmt }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  {% endfor %}
+
+  <div class="footer">Gerado automaticamente pelo sistema de ponto da {{ company_name }}</div>
+</body>
+</html>

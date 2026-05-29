@@ -1,0 +1,61 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Abonos" %}{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <span class="text-sm text-gray-500">{{ absences.count }} {% trans "registro(s)" %}</span>
+  <a href="{% url 'absence_create' %}" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+    + {% trans "Novo Abono" %}
+  </a>
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+      <tr>
+        <th class="px-4 py-3 text-left">{% trans "Funcionário" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Data" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Horas" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Motivo" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Atestado" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Status" %}</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for ab in absences %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 font-medium text-gray-800">{{ ab.employee.name }}</td>
+        <td class="px-4 py-3">{{ ab.date|date:"d/m/Y" }}</td>
+        <td class="px-4 py-3">{{ ab.hours_absent }}h</td>
+        <td class="px-4 py-3 text-gray-600 max-w-xs truncate">{{ ab.reason }}</td>
+        <td class="px-4 py-3">
+          {% if ab.attachment %}
+          <a href="{{ ab.attachment.url }}" target="_blank" class="text-blue-600 hover:underline text-xs">{% trans "Ver" %}</a>
+          {% else %}—{% endif %}
+        </td>
+        <td class="px-4 py-3">
+          {% if ab.is_approved %}
+          <span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold">{% trans "Aprovado" %}</span>
+          {% else %}
+          <span class="px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">{% trans "Pendente" %}</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex gap-3">
+            {% if not ab.is_approved %}
+            <a href="{% url 'absence_approve' ab.pk %}" class="text-green-600 hover:underline text-xs">{% trans "Aprovar" %}</a>
+            {% endif %}
+            <a href="{% url 'absence_delete' ab.pk %}" class="text-red-500 hover:underline text-xs">{% trans "Remover" %}</a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400">{% trans "Nenhum abono registrado." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

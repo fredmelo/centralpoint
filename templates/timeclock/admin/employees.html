@@ -1,0 +1,69 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Funcionários" %}{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h2 class="text-sm text-gray-500">{{ employees.count }} {% trans "funcionário(s)" %}</h2>
+  <a href="{% url 'employee_create' %}" class="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+    + {% trans "Novo Funcionário" %}
+  </a>
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+      <tr>
+        <th class="px-4 py-3 text-left">{% trans "Foto" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Nome" %}</th>
+        <th class="px-4 py-3 text-left">CPF</th>
+        <th class="px-4 py-3 text-left">Email</th>
+        <th class="px-4 py-3 text-left">{% trans "Horas/Dia" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Status" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Rosto" %}</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for emp in employees %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3">
+          {% if emp.photo %}
+          <img src="{{ emp.photo.url }}" class="w-10 h-10 rounded-full object-cover">
+          {% else %}
+          <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 text-lg">?</div>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 font-medium text-gray-800">{{ emp.name }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ emp.cpf }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ emp.email }}</td>
+        <td class="px-4 py-3 text-gray-600">{{ emp.daily_hours }}h</td>
+        <td class="px-4 py-3">
+          {% if emp.is_active %}
+          <span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold">{% trans "Ativo" %}</span>
+          {% else %}
+          <span class="px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold">{% trans "Inativo" %}</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3">
+          {% if emp.face_descriptor %}
+          <span class="text-green-600 text-xs font-semibold">✓ {% trans "Cadastrado" %}</span>
+          {% else %}
+          <span class="text-red-400 text-xs">{% trans "Sem rosto" %}</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3">
+          <div class="flex items-center gap-2">
+            <a href="{% url 'employee_edit' emp.pk %}" class="text-blue-600 hover:underline text-xs">{% trans "Editar" %}</a>
+            <a href="{% url 'employee_delete' emp.pk %}" class="text-red-500 hover:underline text-xs">{% trans "Desativar" %}</a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">{% trans "Nenhum funcionário cadastrado." %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: centralpoint\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-29 00:00+0000\n"
+"PO-Revision-Date: 2025-05-29 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Clock In"
+msgstr "Clock In"
+
+msgid "Lunch Start"
+msgstr "Lunch Start"
+
+msgid "Lunch End"
+msgstr "Lunch End"
+
+msgid "Clock Out"
+msgstr "Clock Out"
+
+msgid "Punch registered successfully."
+msgstr "Punch registered successfully."
+
+msgid "Employee not recognized."
+msgstr "Employee not recognized."
+
+msgid "All punches for today already registered."
+msgstr "All punches for today already registered."
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Employees"
+msgstr "Employees"
+
+msgid "Punches"
+msgstr "Punches"
+
+msgid "Absences"
+msgstr "Absences"
+
+msgid "Balance"
+msgstr "Hour Balance"
+
+msgid "Reports"
+msgstr "Reports"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Approve"
+msgstr "Approve"
+
+msgid "Employee registered successfully."
+msgstr "Employee registered successfully."
+
+msgid "Employee updated."
+msgstr "Employee updated."
+
+msgid "Employee deactivated."
+msgstr "Employee deactivated."
+
+msgid "Record updated."
+msgstr "Record updated."
+
+msgid "Punch registered manually."
+msgstr "Punch registered manually."
+
+msgid "Record removed."
+msgstr "Record removed."
+
+msgid "Absence registered."
+msgstr "Absence registered."
+
+msgid "Absence approved."
+msgstr "Absence approved."
+
+msgid "Absence removed."
+msgstr "Absence removed."
+
+msgid "Invalid parameters."
+msgstr "Invalid parameters."
+
+msgid "All employees"
+msgstr "All employees"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Report sent to %(email)s."
+msgstr "Report sent to %(email)s."
+
+msgid "Download PDF"
+msgstr "Download PDF"
+
+msgid "Send by Email"
+msgstr "Send by Email"
+
+msgid "Present"
+msgstr "Present"
+
+msgid "Absent"
+msgstr "Absent"
+
+msgid "On Lunch"
+msgstr "On Lunch"
+
+msgid "Clocked Out"
+msgstr "Clocked Out"

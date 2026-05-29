@@ -1,0 +1,134 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: centralpoint\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-29 00:00+0000\n"
+"PO-Revision-Date: 2025-05-29 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Clock In"
+msgstr "Entrada"
+
+msgid "Lunch Start"
+msgstr "Início Almoço"
+
+msgid "Lunch End"
+msgstr "Fim Almoço"
+
+msgid "Clock Out"
+msgstr "Saída"
+
+msgid "Punch registered successfully."
+msgstr "Ponto registrado com sucesso."
+
+msgid "Employee not recognized."
+msgstr "Funcionário não reconhecido."
+
+msgid "All punches for today already registered."
+msgstr "Todas as batidas do dia já foram registradas."
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Employees"
+msgstr "Funcionários"
+
+msgid "Punches"
+msgstr "Batidas"
+
+msgid "Absences"
+msgstr "Abonos"
+
+msgid "Balance"
+msgstr "Saldo de Horas"
+
+msgid "Reports"
+msgstr "Relatórios"
+
+msgid "Logout"
+msgstr "Sair"
+
+msgid "Save"
+msgstr "Salvar"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Delete"
+msgstr "Remover"
+
+msgid "Approve"
+msgstr "Aprovar"
+
+msgid "Employee registered successfully."
+msgstr "Funcionário cadastrado com sucesso."
+
+msgid "Employee updated."
+msgstr "Funcionário atualizado."
+
+msgid "Employee deactivated."
+msgstr "Funcionário desativado."
+
+msgid "Record updated."
+msgstr "Registro atualizado."
+
+msgid "Punch registered manually."
+msgstr "Batida registrada manualmente."
+
+msgid "Record removed."
+msgstr "Registro removido."
+
+msgid "Absence registered."
+msgstr "Abono registrado."
+
+msgid "Absence approved."
+msgstr "Abono aprovado."
+
+msgid "Absence removed."
+msgstr "Abono removido."
+
+msgid "Invalid parameters."
+msgstr "Parâmetros inválidos."
+
+msgid "All employees"
+msgstr "Todos os funcionários"
+
+msgid "Register"
+msgstr "Cadastrar"
+
+msgid "Update"
+msgstr "Atualizar"
+
+msgid "Report sent to %(email)s."
+msgstr "Relatório enviado para %(email)s."
+
+msgid "Download PDF"
+msgstr "Baixar PDF"
+
+msgid "Send by Email"
+msgstr "Enviar por Email"
+
+msgid "Present"
+msgstr "Presentes"
+
+msgid "Absent"
+msgstr "Ausentes"
+
+msgid "On Lunch"
+msgstr "Em Almoço"
+
+msgid "Clocked Out"
+msgstr "Saídas"

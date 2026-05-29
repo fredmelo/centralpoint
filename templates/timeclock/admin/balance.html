@@ -1,0 +1,78 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Saldo de Horas" %}{% endblock %}
+
+{% block content %}
+<form method="get" class="flex items-end gap-3 mb-6 flex-wrap bg-white rounded-xl shadow p-4">
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">{% trans "Funcionário" %}</label>
+    <select name="employee" class="form-input w-52">
+      <option value="">{% trans "Selecione..." %}</option>
+      {% for emp in employees %}
+      <option value="{{ emp.pk }}" {% if selected_employee and selected_employee.pk == emp.pk %}selected{% endif %}>{{ emp.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">{% trans "De" %}</label>
+    <input type="date" name="start" value="{{ start_date|date:'Y-m-d' }}" class="form-input">
+  </div>
+  <div>
+    <label class="block text-xs text-gray-500 mb-1">{% trans "Até" %}</label>
+    <input type="date" name="end" value="{{ end_date|date:'Y-m-d' }}" class="form-input">
+  </div>
+  <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">{% trans "Ver Saldo" %}</button>
+</form>
+
+{% if balance_data %}
+<div class="bg-white rounded-xl shadow overflow-hidden mb-4">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+      <tr>
+        <th class="px-4 py-3 text-left">{% trans "Data" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Entrada" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Iníc. Almoço" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Fim Almoço" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Saída" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Trabalhado" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Esperado" %}</th>
+        <th class="px-4 py-3 text-left">{% trans "Saldo" %}</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for row in balance_data.formatted %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 font-medium">{{ row.date|date:"d/m/Y" }}</td>
+        <td class="px-4 py-3 font-mono">{% if row.clock_in %}{{ row.clock_in.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+        <td class="px-4 py-3 font-mono">{% if row.lunch_start %}{{ row.lunch_start.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+        <td class="px-4 py-3 font-mono">{% if row.lunch_end %}{{ row.lunch_end.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+        <td class="px-4 py-3 font-mono">{% if row.clock_out %}{{ row.clock_out.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+        <td class="px-4 py-3 font-mono">{{ row.worked_fmt }}</td>
+        <td class="px-4 py-3 font-mono text-gray-400">{{ row.expected_fmt }}</td>
+        <td class="px-4 py-3 font-mono font-semibold
+          {% if row.balance and row.balance.total_seconds >= 0 %}text-green-600{% elif row.balance %}text-red-600{% endif %}">
+          {{ row.balance_fmt }}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">{% trans "Nenhum dado no período." %}</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot class="bg-gray-50 font-semibold text-sm">
+      <tr>
+        <td colspan="5" class="px-4 py-3 text-right text-gray-600">{% trans "Total:" %}</td>
+        <td class="px-4 py-3 font-mono">{{ balance_data.total_worked_fmt }}</td>
+        <td class="px-4 py-3 font-mono text-gray-400">{{ balance_data.total_expected_fmt }}</td>
+        <td class="px-4 py-3 font-mono
+          {% if balance_data.total_balance.total_seconds >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+          {{ balance_data.total_balance_fmt }}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+{% elif selected_employee is None %}
+<p class="text-gray-400 text-sm text-center py-8">{% trans "Selecione um funcionário para ver o saldo." %}</p>
+{% endif %}
+{% endblock %}

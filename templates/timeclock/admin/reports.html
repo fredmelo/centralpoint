@@ -1,0 +1,92 @@
+{% extends "timeclock/admin/base_admin.html" %}
+{% load i18n %}
+
+{% block page_title %}{% trans "Relatórios" %}{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow p-4 mb-6">
+  <form method="get" class="flex items-end gap-3 flex-wrap">
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">{% trans "Funcionário" %}</label>
+      {{ form.employee }}
+    </div>
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">{% trans "De" %}</label>
+      {{ form.start_date }}
+    </div>
+    <div>
+      <label class="block text-xs text-gray-500 mb-1">{% trans "Até" %}</label>
+      {{ form.end_date }}
+    </div>
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">{% trans "Gerar Relatório" %}</button>
+  </form>
+</div>
+
+{% if report_data %}
+{% with emp_id=request.GET.employee start=request.GET.start_date end=request.GET.end_date %}
+<div class="flex items-center gap-3 mb-4">
+  <a href="{% url 'report_pdf' %}?employee={{ emp_id }}&start={{ start }}&end={{ end }}"
+    target="_blank"
+    class="px-4 py-2 bg-rose-600 text-white text-sm rounded-lg hover:bg-rose-700">
+    ⬇ {% trans "Baixar PDF" %}
+  </a>
+  {% if report_data|length == 1 %}
+  <form method="post" action="{% url 'report_send_email' %}">
+    {% csrf_token %}
+    <input type="hidden" name="employee" value="{{ emp_id }}">
+    <input type="hidden" name="start" value="{{ start }}">
+    <input type="hidden" name="end" value="{{ end }}">
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">
+      ✉ {% trans "Enviar por Email" %}
+    </button>
+  </form>
+  {% endif %}
+</div>
+{% endwith %}
+
+{% for bd in report_data %}
+<div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+  <div class="px-5 py-3 bg-gray-50 border-b flex items-center justify-between">
+    <span class="font-semibold text-gray-700">{{ bd.employee.name }}</span>
+    <span class="text-xs text-gray-500">{{ bd.employee.email }}</span>
+  </div>
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+      <tr>
+        <th class="px-4 py-2 text-left">{% trans "Data" %}</th>
+        <th class="px-4 py-2 text-left">{% trans "Entrada" %}</th>
+        <th class="px-4 py-2 text-left">{% trans "Saída" %}</th>
+        <th class="px-4 py-2 text-left">{% trans "Trabalhado" %}</th>
+        <th class="px-4 py-2 text-left">{% trans "Saldo" %}</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for row in bd.rows %}
+      <tr>
+        <td class="px-4 py-2">{{ row.date|date:"d/m/Y" }}</td>
+        <td class="px-4 py-2 font-mono">{% if row.clock_in %}{{ row.clock_in.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+        <td class="px-4 py-2 font-mono">{% if row.clock_out %}{{ row.clock_out.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+        <td class="px-4 py-2 font-mono">{{ row.worked_fmt }}</td>
+        <td class="px-4 py-2 font-mono {% if row.balance and row.balance.total_seconds >= 0 %}text-green-600{% elif row.balance %}text-red-600{% endif %}">
+          {{ row.balance_fmt }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot class="bg-gray-50 font-semibold text-sm">
+      <tr>
+        <td colspan="3" class="px-4 py-3 text-right text-gray-600">{% trans "Total:" %}</td>
+        <td class="px-4 py-3 font-mono">{{ bd.total_worked_fmt }}</td>
+        <td class="px-4 py-3 font-mono {% if bd.total_balance.total_seconds >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+          {{ bd.total_balance_fmt }}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+{% endfor %}
+
+{% elif request.GET %}
+<p class="text-gray-400 text-sm text-center py-8">{% trans "Nenhum dado encontrado para o período selecionado." %}</p>
+{% endif %}
+{% endblock %}
