@@ -90,11 +90,15 @@ def meu_ponto_abono(request):
     if request.method == 'POST':
         form = AbsenceRequestForm(request.POST, request.FILES)
         if form.is_valid():
-            absence = form.save(commit=False)
-            absence.employee = employee
-            absence.save()
-            messages.success(request, _('Solicitação enviada. Aguardando aprovação do administrador.'))
-            return redirect('meu_ponto')
+            try:
+                absence = form.save(commit=False)
+                absence.employee = employee
+                absence.save()
+                messages.success(request, _('Solicitação enviada. Aguardando aprovação do administrador.'))
+                return redirect('meu_ponto')
+            except Exception as e:
+                traceback.print_exc()
+                messages.error(request, f'Erro ao salvar solicitação: {e}')
     else:
         form = AbsenceRequestForm()
 

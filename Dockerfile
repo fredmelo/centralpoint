@@ -35,4 +35,4 @@ ENV WORKERS=2
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate && gunicorn centralpoint.wsgi:application --bind 0.0.0.0:$PORT --workers $WORKERS"]
+CMD ["sh", "-c", "mkdir -p /app/data/media/atestados /app/data/media/employees && python manage.py migrate && gunicorn centralpoint.wsgi:application --bind 0.0.0.0:$PORT --workers $WORKERS"]
