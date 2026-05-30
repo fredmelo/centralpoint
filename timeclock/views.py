@@ -527,8 +527,12 @@ def report_pdf(request):
         'company_name': 'Centraltur Viagens',
     }, request=request)
 
-    from weasyprint import HTML
-    pdf = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
+    try:
+        from weasyprint import HTML as WeasyHTML
+        pdf = WeasyHTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
+    except Exception as e:
+        traceback.print_exc()
+        return HttpResponse(f'Erro ao gerar PDF: {e}', status=500)
 
     period_label = f'{start_date.strftime("%Y%m%d")}-{end_date.strftime("%Y%m%d")}'
     response = HttpResponse(pdf, content_type='application/pdf')
@@ -569,8 +573,13 @@ def report_send_email(request):
         'company_name': 'Centraltur Viagens',
     }, request=request)
 
-    from weasyprint import HTML
-    pdf = HTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
+    try:
+        from weasyprint import HTML as WeasyHTML
+        pdf = WeasyHTML(string=html, base_url=request.build_absolute_uri('/')).write_pdf()
+    except Exception as e:
+        traceback.print_exc()
+        messages.error(request, f'Erro ao gerar PDF: {e}')
+        return redirect('reports_view')
 
     period_label = f'{start_date.strftime("%d/%m/%Y")} – {end_date.strftime("%d/%m/%Y")}'
     filename = f'relatorio_{start_date.strftime("%Y%m%d")}-{end_date.strftime("%Y%m%d")}.pdf'
