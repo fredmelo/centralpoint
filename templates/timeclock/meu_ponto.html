@@ -1,0 +1,157 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centraltur — {% trans "Meu Ponto" %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+<header class="px-6 py-4 flex items-center justify-between border-b border-gray-700">
+  <div class="flex items-center gap-3">
+    <a href="/" class="text-gray-400 hover:text-white text-sm">← {% trans "Terminal" %}</a>
+    <span class="text-gray-600">|</span>
+    <span class="text-lg font-bold text-blue-400">{% trans "Meu Ponto" %}</span>
+  </div>
+  <div class="flex items-center gap-4">
+    {% if employee %}
+    <span class="text-sm text-gray-300">{{ employee.name }}</span>
+    <a href="{% url 'meu_ponto_sair' %}" class="text-xs text-gray-400 hover:text-red-400 border border-gray-600 rounded px-2 py-1">
+      {% trans "Sair" %}
+    </a>
+    {% endif %}
+    <form method="post" action="{% url 'set_language' %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}">
+      <input type="hidden" name="language" value="{% if LANGUAGE_CODE == 'pt-br' %}en{% else %}pt-br{% endif %}">
+      <button type="submit" class="text-xs font-semibold text-gray-400 hover:text-blue-400 border border-gray-600 rounded px-2 py-1">
+        {% if LANGUAGE_CODE == 'pt-br' %}EN{% else %}PT{% endif %}
+      </button>
+    </form>
+  </div>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center gap-5 p-6">
+
+{% if not employee %}
+  <!-- ── Camera identification ── -->
+  <p class="text-gray-400 text-sm">{% trans "Olhe para a câmera e pressione Identificar" %}</p>
+
+  <div class="relative w-full max-w-md">
+    <video id="video" autoplay muted playsinline
+      class="w-full rounded-2xl shadow-2xl border-2 border-gray-700"
+      style="max-height: 380px; object-fit: cover;"></video>
+    <canvas id="overlay" class="absolute inset-0 w-full h-full rounded-2xl" style="pointer-events:none;"></canvas>
+    <div id="status-badge"
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full text-sm font-semibold bg-gray-800/80 text-gray-300 backdrop-blur whitespace-nowrap">
+      {% trans "Carregando modelos..." %}
+    </div>
+  </div>
+
+  <button id="identify-btn" disabled
+    class="w-full max-w-md py-4 rounded-2xl text-lg font-bold bg-blue-600 hover:bg-blue-500 active:scale-95 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+    {% trans "IDENTIFICAR" %}
+  </button>
+
+{% else %}
+  <!-- ── Employee history ── -->
+  <div class="w-full max-w-2xl space-y-6">
+
+    <!-- Today -->
+    <div class="bg-gray-800 rounded-2xl p-5 border border-gray-700">
+      <h2 class="font-bold text-blue-400 mb-3">{% trans "Hoje" %} — {{ today|date:"d/m/Y" }}</h2>
+      {% if today_punches %}
+      <div class="flex flex-wrap gap-3">
+        {% for p in today_punches %}
+        <div class="flex flex-col items-center bg-gray-700 rounded-xl px-4 py-3 min-w-[90px]">
+          <span class="text-xs text-gray-400 mb-1">{{ p.get_punch_type_display }}</span>
+          <span class="text-xl font-mono font-bold">{{ p.punched_at|time:"H:i" }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-gray-500 text-sm">{% trans "Nenhuma batida hoje." %}</p>
+      {% endif %}
+    </div>
+
+    <!-- Month balance -->
+    <div class="bg-gray-800 rounded-2xl p-5 border border-gray-700">
+      <h2 class="font-bold text-blue-400 mb-3">{% trans "Saldo do Mês" %}</h2>
+      <div class="grid grid-cols-3 gap-4 text-center">
+        <div>
+          <div class="text-2xl font-mono font-bold text-white">{{ month_bd.total_worked_fmt }}</div>
+          <div class="text-xs text-gray-400 mt-1">{% trans "Trabalhado" %}</div>
+        </div>
+        <div>
+          <div class="text-2xl font-mono font-bold text-gray-400">{{ month_bd.total_expected_fmt }}</div>
+          <div class="text-xs text-gray-400 mt-1">{% trans "Esperado" %}</div>
+        </div>
+        <div>
+          <div class="text-2xl font-mono font-bold
+            {% if month_bd.total_balance.total_seconds >= 0 %}text-green-400{% else %}text-red-400{% endif %}">
+            {{ month_bd.total_balance_fmt }}
+          </div>
+          <div class="text-xs text-gray-400 mt-1">{% trans "Saldo" %}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last 30 days -->
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+      <div class="px-5 py-3 border-b border-gray-700">
+        <h2 class="font-bold text-blue-400">{% trans "Últimos 30 dias" %}</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-700/50 text-gray-400 text-xs uppercase">
+            <tr>
+              <th class="px-4 py-2 text-left">{% trans "Data" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Entrada" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Saída" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Trabalhado" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Saldo" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700/50">
+            {% for row in period.rows reversed %}
+            <tr class="hover:bg-gray-700/30">
+              <td class="px-4 py-2">{{ row.date|date:"d/m" }}</td>
+              <td class="px-4 py-2 font-mono">{% if row.clock_in %}{{ row.clock_in.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+              <td class="px-4 py-2 font-mono">{% if row.clock_out %}{{ row.clock_out.punched_at|time:"H:i" }}{% else %}—{% endif %}</td>
+              <td class="px-4 py-2 font-mono">{{ row.worked_fmt }}</td>
+              <td class="px-4 py-2 font-mono font-semibold
+                {% if row.balance and row.balance.total_seconds >= 0 %}text-green-400{% elif row.balance %}text-red-400{% endif %}">
+                {{ row.balance_fmt }}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="px-4 py-6 text-center text-gray-500">{% trans "Nenhum registro no período." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+{% endif %}
+
+</main>
+
+{% if not employee %}
+<script>
+const FACE_MODEL_URL = "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights";
+const API_URL        = "{% url 'api_identify' %}";
+const CSRF_TOKEN     = "{{ csrf_token }}";
+</script>
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+<script src="{% static 'timeclock/identify.js' %}"></script>
+{% endif %}
+
+<script>
+const LOCALE_DAYS   = {{ LOCALE_DAYS|safe }};
+const LOCALE_MONTHS = {{ LOCALE_MONTHS|safe }};
+</script>
+</body>
+</html>

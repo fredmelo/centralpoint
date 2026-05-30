@@ -7,6 +7,11 @@ urlpatterns = [
     path('', views.punch_terminal, name='punch_terminal'),
     path('api/punch/', views.api_punch, name='api_punch'),
 
+    # Public — employee self-service
+    path('meu-ponto/', views.meu_ponto, name='meu_ponto'),
+    path('meu-ponto/sair/', views.meu_ponto_sair, name='meu_ponto_sair'),
+    path('api/identify/', views.api_identify, name='api_identify'),
+
     # Admin panel
     path('painel/dashboard/', views.admin_dashboard, name='admin_dashboard'),
 

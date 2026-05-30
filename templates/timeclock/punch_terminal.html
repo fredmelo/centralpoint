@@ -16,6 +16,9 @@
   </div>
   <div class="flex items-center gap-4">
     <div id="clock" class="text-2xl font-mono font-bold text-blue-300"></div>
+    <a href="{% url 'meu_ponto' %}" class="text-xs text-gray-400 hover:text-blue-400 border border-gray-600 rounded px-2 py-1">
+      {% trans "Meu Ponto" %}
+    </a>
     <form method="post" action="{% url 'set_language' %}">
       {% csrf_token %}
       <input type="hidden" name="next" value="/">

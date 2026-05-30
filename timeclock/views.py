@@ -29,6 +29,81 @@ def punch_terminal(request):
     return render(request, 'timeclock/punch_terminal.html')
 
 
+# ---------------------------------------------------------------------------
+# Public — employee self-service (meu ponto)
+# ---------------------------------------------------------------------------
+
+def meu_ponto(request):
+    employee_id = request.session.get('employee_punch_id')
+    context = {}
+
+    if employee_id:
+        try:
+            employee = Employee.objects.get(pk=employee_id, is_active=True)
+            today = timezone.localdate()
+            first_of_month = today.replace(day=1)
+
+            today_punches = PunchRecord.objects.filter(
+                employee=employee, punched_at__date=today
+            ).order_by('punched_at')
+
+            month_bd = get_period_balance(employee, first_of_month, today)
+            month_bd['total_worked_fmt'] = format_timedelta(month_bd['total_worked'])
+            month_bd['total_balance_fmt'] = format_timedelta(month_bd['total_balance'])
+
+            start = today - timedelta(days=29)
+            period = get_period_balance(employee, start, today)
+            for row in period['rows']:
+                row['worked_fmt'] = format_timedelta(row['worked'])
+                row['balance_fmt'] = format_timedelta(row['balance'])
+
+            context = {
+                'employee': employee,
+                'today': today,
+                'today_punches': today_punches,
+                'month_bd': month_bd,
+                'period': period,
+            }
+        except Employee.DoesNotExist:
+            request.session.pop('employee_punch_id', None)
+
+    return render(request, 'timeclock/meu_ponto.html', context)
+
+
+def meu_ponto_sair(request):
+    request.session.pop('employee_punch_id', None)
+    return redirect('meu_ponto')
+
+
+@require_POST
+def api_identify(request):
+    """Reconhece o funcionário sem registrar batida — usado na tela Meu Ponto."""
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'error': 'invalid_json'}, status=400)
+
+    descriptor = data.get('descriptor')
+    if not isinstance(descriptor, list) or len(descriptor) != 128:
+        return JsonResponse({'error': 'invalid_descriptor'}, status=400)
+
+    try:
+        employee, confidence = _find_employee(descriptor)
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({'error': 'find_employee_failed'}, status=500)
+
+    if employee is None:
+        return JsonResponse({'error': 'face_not_recognized', 'confidence': confidence}, status=404)
+
+    request.session['employee_punch_id'] = employee.id
+    return JsonResponse({
+        'employee_id': employee.id,
+        'employee_name': employee.name,
+        'confidence': round(confidence, 3),
+    })
+
+
 @require_POST
 def api_punch(request):
     try:
