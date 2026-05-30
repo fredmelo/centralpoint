@@ -20,13 +20,12 @@ COPY --chown=appuser:appuser . .
 RUN mkdir -p /app/data static/face-api/models
 
 # Download face-api.js + model weights for offline use on the tablet
-# --fail: exit non-zero on HTTP errors (prevents saving HTML error pages as model files)
-# --retry 3: retry on transient network failures
-# --retry-delay 2: wait 2s between retries
+# Use raw.githubusercontent.com — jsDelivr retorna shards gzip-encoded,
+# corrompendo os binários dos modelos ao salvar.
 RUN curl --fail --retry 3 --retry-delay 2 -L \
         "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js" \
         -o static/face-api/face-api.min.js && \
-    WEIGHTS_BASE="https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights" && \
+    WEIGHTS_BASE="https://raw.githubusercontent.com/justadudewhohacks/face-api.js/0.22.2/weights" && \
     for f in ssd_mobilenetv1_model-weights_manifest.json \
               ssd_mobilenetv1_model-shard1 \
               face_landmark_68_model-weights_manifest.json \
