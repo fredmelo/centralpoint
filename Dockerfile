@@ -20,8 +20,11 @@ COPY --chown=appuser:appuser . .
 RUN mkdir -p /app/data static/face-api/models
 
 # Download face-api.js + model weights for offline use on the tablet
-# Library from npm, weights from GitHub (npm package does not include weights)
-RUN curl -sL "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js" \
+# --fail: exit non-zero on HTTP errors (prevents saving HTML error pages as model files)
+# --retry 3: retry on transient network failures
+# --retry-delay 2: wait 2s between retries
+RUN curl --fail --retry 3 --retry-delay 2 -L \
+        "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js" \
         -o static/face-api/face-api.min.js && \
     WEIGHTS_BASE="https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights" && \
     for f in ssd_mobilenetv1_model-weights_manifest.json \
@@ -31,7 +34,10 @@ RUN curl -sL "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.
               face_recognition_model-weights_manifest.json \
               face_recognition_model-shard1 \
               face_recognition_model-shard2; do \
-        curl -sL "$WEIGHTS_BASE/$f" -o "static/face-api/models/$f"; \
+        echo "Downloading $f..." && \
+        curl --fail --retry 3 --retry-delay 2 -L \
+             "$WEIGHTS_BASE/$f" -o "static/face-api/models/$f" && \
+        echo "  OK: $(wc -c < static/face-api/models/$f) bytes"; \
     done
 
 # Update templates to use local models in production
