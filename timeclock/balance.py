@@ -1,9 +1,8 @@
 from datetime import timedelta
-from decimal import Decimal
 
 from django.utils import timezone
 
-from .models import AbsenceRecord, PunchRecord
+from .models import PunchRecord
 
 
 def calculate_day_balance(employee, date):
@@ -28,12 +27,9 @@ def calculate_day_balance(employee, date):
 
     expected = timedelta(hours=float(employee.daily_hours))
 
-    absences = AbsenceRecord.objects.filter(employee=employee, date=date, approved_by__isnull=False)
-    absence_hours = sum(float(a.hours_absent) for a in absences)
-
     balance = None
     if worked is not None:
-        balance = worked - expected + timedelta(hours=absence_hours)
+        balance = worked - expected
 
     return {
         'date': date,
@@ -44,7 +40,6 @@ def calculate_day_balance(employee, date):
         'worked': worked,
         'expected': expected,
         'balance': balance,
-        'absence_hours': absence_hours,
     }
 
 
