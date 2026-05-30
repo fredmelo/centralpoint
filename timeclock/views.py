@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .balance import format_timedelta, get_period_balance
-from .forms import AbsenceForm, EmployeeForm, PunchEditForm, ReportFilterForm
+from .forms import AbsenceForm, AbsenceRequestForm, EmployeeForm, PunchEditForm, ReportFilterForm
 from .models import AbsenceRecord, Employee, PunchRecord, next_expected_punch
 
 
@@ -58,12 +58,17 @@ def meu_ponto(request):
                 row['worked_fmt'] = format_timedelta(row['worked'])
                 row['balance_fmt'] = format_timedelta(row['balance'])
 
+            recent_absences = AbsenceRecord.objects.filter(
+                employee=employee
+            ).order_by('-date')[:10]
+
             context = {
                 'employee': employee,
                 'today': today,
                 'today_punches': today_punches,
                 'month_bd': month_bd,
                 'period': period,
+                'recent_absences': recent_absences,
             }
         except Employee.DoesNotExist:
             request.session.pop('employee_punch_id', None)
@@ -74,6 +79,29 @@ def meu_ponto(request):
 def meu_ponto_sair(request):
     request.session.pop('employee_punch_id', None)
     return redirect('meu_ponto')
+
+
+def meu_ponto_abono(request):
+    employee_id = request.session.get('employee_punch_id')
+    if not employee_id:
+        return redirect('meu_ponto')
+    employee = get_object_or_404(Employee, pk=employee_id, is_active=True)
+
+    if request.method == 'POST':
+        form = AbsenceRequestForm(request.POST, request.FILES)
+        if form.is_valid():
+            absence = form.save(commit=False)
+            absence.employee = employee
+            absence.save()
+            messages.success(request, _('Solicitação enviada. Aguardando aprovação do administrador.'))
+            return redirect('meu_ponto')
+    else:
+        form = AbsenceRequestForm()
+
+    return render(request, 'timeclock/meu_ponto_abono.html', {
+        'form': form,
+        'employee': employee,
+    })
 
 
 @require_POST

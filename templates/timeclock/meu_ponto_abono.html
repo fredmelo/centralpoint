@@ -1,0 +1,106 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Centraltur — {% trans "Solicitar Abono" %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .form-input-dark {
+      display: block; width: 100%;
+      background: #374151; border: 1px solid #4b5563;
+      color: #f9fafb; padding: 0.5rem 0.75rem; border-radius: 0.5rem;
+      font-size: 0.875rem;
+    }
+    .form-input-dark:focus { outline: none; border-color: #3b82f6; }
+    .form-input-dark::placeholder { color: #9ca3af; }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+<header class="px-6 py-4 flex items-center justify-between border-b border-gray-700">
+  <div class="flex items-center gap-3">
+    <a href="{% url 'meu_ponto' %}" class="text-gray-400 hover:text-white text-sm">← {% trans "Meu Ponto" %}</a>
+    <span class="text-gray-600">|</span>
+    <span class="text-lg font-bold text-blue-400">{% trans "Solicitar Abono" %}</span>
+  </div>
+  <span class="text-sm text-gray-400">{{ employee.name }}</span>
+</header>
+
+<main class="flex-1 flex flex-col items-center justify-center p-6">
+  <div class="w-full max-w-lg bg-gray-800 rounded-2xl border border-gray-700 p-6">
+
+    {% if messages %}
+    <div class="mb-4 space-y-2">
+      {% for msg in messages %}
+      <div class="px-4 py-3 rounded-lg text-sm
+        {% if msg.tags == 'error' %}bg-red-900/50 text-red-300 border border-red-700
+        {% else %}bg-green-900/50 text-green-300 border border-green-700{% endif %}">
+        {{ msg }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <p class="text-gray-400 text-sm mb-5">
+      {% trans "Preencha os dados abaixo. O abono será contabilizado no saldo após aprovação do administrador." %}
+    </p>
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">{% trans "Data" %}</label>
+        {{ form.date }}
+        {% if form.date.errors %}
+        <p class="text-red-400 text-xs mt-1">{{ form.date.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">{% trans "Horas a abonar" %}</label>
+        {{ form.hours_absent }}
+        {% if form.hours_absent.errors %}
+        <p class="text-red-400 text-xs mt-1">{{ form.hours_absent.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">{% trans "Motivo" %}</label>
+        {{ form.reason }}
+        {% if form.reason.errors %}
+        <p class="text-red-400 text-xs mt-1">{{ form.reason.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-1">
+          {% trans "Atestado / Documento" %} <span class="text-gray-500 font-normal">({% trans "opcional" %})</span>
+        </label>
+        {{ form.attachment }}
+        {% if form.attachment.errors %}
+        <p class="text-red-400 text-xs mt-1">{{ form.attachment.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button type="submit"
+          class="flex-1 py-3 rounded-xl font-bold bg-blue-600 hover:bg-blue-500 active:scale-95 transition-all">
+          {% trans "Enviar Solicitação" %}
+        </button>
+        <a href="{% url 'meu_ponto' %}"
+          class="flex-1 py-3 rounded-xl font-semibold text-center bg-gray-700 hover:bg-gray-600 transition-colors">
+          {% trans "Cancelar" %}
+        </a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script>
+const LOCALE_DAYS   = {{ LOCALE_DAYS|safe }};
+const LOCALE_MONTHS = {{ LOCALE_MONTHS|safe }};
+</script>
+</body>
+</html>

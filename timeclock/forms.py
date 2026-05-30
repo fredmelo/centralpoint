@@ -65,6 +65,20 @@ class AbsenceForm(forms.ModelForm):
         }
 
 
+class AbsenceRequestForm(forms.ModelForm):
+    """Form for employees to request absences from the Meu Ponto terminal."""
+    class Meta:
+        model = AbsenceRecord
+        fields = ['date', 'hours_absent', 'reason', 'attachment']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-input-dark'}),
+            'hours_absent': forms.NumberInput(attrs={'class': 'form-input-dark', 'step': '0.5', 'min': '0.5'}),
+            'reason': forms.Textarea(attrs={'class': 'form-input-dark', 'rows': 3,
+                                            'placeholder': 'Descreva o motivo do abono...'}),
+            'attachment': forms.FileInput(attrs={'class': 'form-input-dark'}),
+        }
+
+
 class ReportFilterForm(forms.Form):
     employee = forms.ModelChoiceField(
         queryset=Employee.objects.filter(is_active=True),

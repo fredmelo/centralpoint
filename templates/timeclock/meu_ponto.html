@@ -134,6 +134,47 @@
       </div>
     </div>
 
+    <!-- Absences -->
+    <div class="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+      <div class="px-5 py-3 border-b border-gray-700 flex items-center justify-between">
+        <h2 class="font-bold text-blue-400">{% trans "Meus Abonos" %}</h2>
+        <a href="{% url 'meu_ponto_abono' %}"
+          class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg transition-colors">
+          + {% trans "Solicitar Abono" %}
+        </a>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-700/50 text-gray-400 text-xs uppercase">
+            <tr>
+              <th class="px-4 py-2 text-left">{% trans "Data" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Horas" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Motivo" %}</th>
+              <th class="px-4 py-2 text-left">{% trans "Status" %}</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700/50">
+            {% for ab in recent_absences %}
+            <tr class="hover:bg-gray-700/30">
+              <td class="px-4 py-2">{{ ab.date|date:"d/m/Y" }}</td>
+              <td class="px-4 py-2 font-mono">{{ ab.hours_absent }}h</td>
+              <td class="px-4 py-2 text-gray-300 max-w-xs truncate">{{ ab.reason }}</td>
+              <td class="px-4 py-2">
+                {% if ab.is_approved %}
+                <span class="px-2 py-0.5 rounded-full bg-green-900/50 text-green-400 text-xs font-semibold">{% trans "Aprovado" %}</span>
+                {% else %}
+                <span class="px-2 py-0.5 rounded-full bg-yellow-900/50 text-yellow-400 text-xs font-semibold">{% trans "Pendente" %}</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4" class="px-4 py-6 text-center text-gray-500">{% trans "Nenhum abono solicitado." %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 {% endif %}
 

@@ -10,6 +10,7 @@ urlpatterns = [
     # Public — employee self-service
     path('meu-ponto/', views.meu_ponto, name='meu_ponto'),
     path('meu-ponto/sair/', views.meu_ponto_sair, name='meu_ponto_sair'),
+    path('meu-ponto/abono/', views.meu_ponto_abono, name='meu_ponto_abono'),
     path('api/identify/', views.api_identify, name='api_identify'),
 
     # Admin panel
