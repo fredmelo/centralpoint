@@ -49,6 +49,7 @@ def meu_ponto(request):
 
             month_bd = get_period_balance(employee, first_of_month, today)
             month_bd['total_worked_fmt'] = format_timedelta(month_bd['total_worked'])
+            month_bd['total_expected_fmt'] = format_timedelta(month_bd['total_expected'])
             month_bd['total_balance_fmt'] = format_timedelta(month_bd['total_balance'])
 
             start = today - timedelta(days=29)
