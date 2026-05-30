@@ -9,10 +9,9 @@ class EmployeeForm(forms.ModelForm):
 
     class Meta:
         model = Employee
-        fields = ['name', 'cpf', 'email', 'photo', 'daily_hours', 'is_active']
+        fields = ['name', 'email', 'photo', 'daily_hours', 'is_active']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-input'}),
-            'cpf': forms.TextInput(attrs={'class': 'form-input', 'placeholder': '000.000.000-00'}),
             'email': forms.EmailInput(attrs={'class': 'form-input'}),
             'daily_hours': forms.NumberInput(attrs={'class': 'form-input', 'step': '0.5'}),
         }

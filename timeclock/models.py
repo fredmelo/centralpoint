@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 class Employee(models.Model):
     name = models.CharField(max_length=100)
-    cpf = models.CharField(max_length=14, unique=True)
+    cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
     email = models.EmailField()
     photo = models.ImageField(upload_to='employees/', null=True, blank=True)
     face_descriptor = models.JSONField(null=True, blank=True)
