@@ -8,7 +8,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpangoft2-1.0-0 \
     libcairo2 \
     libgdk-pixbuf-xlib-2.0-0 \
-    curl \
     && rm -rf /var/lib/apt/lists/* \
     && useradd -m appuser
 
@@ -17,32 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=appuser:appuser . .
 
-RUN mkdir -p /app/data static/face-api/models
-
-# Download face-api.js + model weights for offline use on the tablet
-# Use raw.githubusercontent.com — jsDelivr retorna shards gzip-encoded,
-# corrompendo os binários dos modelos ao salvar.
-RUN curl --fail --retry 3 --retry-delay 2 -L \
-        "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js" \
-        -o static/face-api/face-api.min.js && \
-    WEIGHTS_BASE="https://raw.githubusercontent.com/justadudewhohacks/face-api.js/0.22.2/weights" && \
-    for f in ssd_mobilenetv1_model-weights_manifest.json \
-              ssd_mobilenetv1_model-shard1 \
-              face_landmark_68_model-weights_manifest.json \
-              face_landmark_68_model-shard1 \
-              face_recognition_model-weights_manifest.json \
-              face_recognition_model-shard1 \
-              face_recognition_model-shard2; do \
-        echo "Downloading $f..." && \
-        curl --fail --retry 3 --retry-delay 2 -L \
-             "$WEIGHTS_BASE/$f" -o "static/face-api/models/$f" && \
-        echo "  OK: $(wc -c < static/face-api/models/$f) bytes"; \
-    done
-
-# Update templates to use local models in production
-RUN sed -i 's|https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@0.22.2/weights|/static/face-api/models|g' \
-    templates/timeclock/punch_terminal.html \
-    templates/timeclock/admin/employee_form.html
+RUN mkdir -p /app/data
 
 ENV SECRET_KEY=build-placeholder
 RUN python manage.py compilemessages

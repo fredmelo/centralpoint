@@ -91,7 +91,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STORAGES = {
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        # CompressedManifestStaticFilesStorage gzip-encodes binary model files
+        # causing TensorFlow.js/face-api to receive raw gzip bytes as float32.
+        # ManifestStaticFilesStorage keeps originals intact without compression.
+        'BACKEND': 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage',
     },
     'default': {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
